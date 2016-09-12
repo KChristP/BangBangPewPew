@@ -18,8 +18,8 @@ Additionally this project will include:
 - An About modal describing the rules and controls
 
 ##Wireframes
-![Intro]('../assets/images/wf1.jpg')
-![Game]('../assets/images/wf2.jpg')
+![Intro](../assets/images/wf1.jpg)
+![Game](../assets/images/wf2.jpg)
 
 ##Architecture and Technologies
 This project will be implemented with the following Technologies:
