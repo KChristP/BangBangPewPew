@@ -1,5 +1,7 @@
 
+
 var loader = new THREE.TextureLoader();
+// loader.crossOrigin = ""
 // var wallTexture = loader.load('http://i.imgur.com/Mtgockn.jpg', );
 // var texture2 = loader.load('texture2.jpg');
 
@@ -13,8 +15,8 @@ var loader = new THREE.TextureLoader();
   let villains = []
 
 // Meshes
-  let cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 )
-  let sphereGeometry = new THREE.IcosahedronGeometry(0.5, 2);
+  let cubeGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 )
+  let sphereGeometry = new THREE.IcosahedronGeometry(0.25, 2);
   let heroMaterial = new THREE.MeshLambertMaterial( { color: 0x336699 } );
   let bulletMaterial = new THREE.MeshNormalMaterial( { wireframe: true } );
   let cube = new THREE.Mesh( cubeGeometry, heroMaterial );
@@ -47,9 +49,9 @@ var loader = new THREE.TextureLoader();
   scene.add( cube );
 // create light sources
   let pointLight1 = new THREE.PointLight(0xFFFFFF);
-  let ambientLight = new THREE.AmbientLight(0xFFFFFF);
+  let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
 
-  pointLight1.position.set(10, 50, 130)
+  pointLight1.position.set(10, 50, -130)
   scene.add(pointLight1);
   scene.add(ambientLight);
   scene.fog = new THREE.FogExp2(0xD6F1FF, 0.01);
@@ -60,6 +62,7 @@ var loader = new THREE.TextureLoader();
   camera.position.y = 1
   camera.position.x = 0
   cube.add(camera)
+
   function render() {
     requestAnimationFrame( render );
 
@@ -198,12 +201,14 @@ function setupMap (){
   let innerWallCube3 = new THREE.CubeGeometry(9.5, mapHeight, 0.5);
   let wallCubes = [null, outerWallCube, innerWallCube1, innerWallCube2, innerWallCube3]
 
-  var wallTexture = loader.load('http://previews.123rf.com/images/kentoh/kentoh1103/kentoh110300048/8971306-Seamless-Space-Hull-Ship-Pattern-as-Background-Stock-Photo-spaceship-texture.jpg');
+
+
+  var wallTexture = loader.load('/images/spaceshipTexture.jpg');
   let wallMaterial = new THREE.MeshLambertMaterial({map: wallTexture})
   // [
   //   null,
   //   new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('assets/images/wall.jpg')})
-  // ]
+  // ]http://previews.123rf.com/images/kentoh/kentoh1103/kentoh110300048/8971306-Seamless-Space-Hull-Ship-Pattern-as-Background-Stock-Photo-spaceship-texture.jpg
 
   for(let i = 0; i < map.length; i++) {
     for(let j = 0, length = map[i].length; j < length; j++){
@@ -218,14 +223,15 @@ function setupMap (){
 
   let floor = new THREE.Mesh(
     new THREE.CubeGeometry(mapWidth, 0.0001, mapWidth),
-    new THREE.MeshLambertMaterial({color: 0x666666})
+    wallMaterial//new THREE.MeshLambertMaterial({color: 0x666666})
   )
   floor.position.y = -0.5
   scene.add(floor)
 
+  var ceilingTexture = loader.load('/images/newspace.png');
   let ceiling = new THREE.Mesh(
     new THREE.CubeGeometry(mapWidth, 0.0001, mapWidth),
-    new THREE.MeshLambertMaterial({color: 0x99CCCC})
+    new THREE.MeshLambertMaterial({map: ceilingTexture})
   )
   ceiling.position.y = 4
   scene.add(ceiling)
@@ -261,9 +267,9 @@ function detectCollision(object1, object2){
   (Math.abs(object1.position.z - object2.position.z) < 1)
 }
 
-$(document).ready(() => {
+// $(document).ready(() => {
   render();
-})
+// })
 
 
 
