@@ -11,6 +11,11 @@ function setupGame(){
 
   window.liveGame = false
   window.numberOfVillains = 10
+  window.movingForward = false
+  window.movingBackward = false
+  window.turningLeft = false
+  window.turningRight = false
+  window.shooting = false
   // Meshes
   let cubeGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 )
   window.sphereGeometry = new THREE.IcosahedronGeometry(0.25, 4);
@@ -126,6 +131,49 @@ function render() {
         villain.translateX(-0.05)
       }
     })
+
+    if(turningLeft){
+      cube.rotation.y += 0.05
+    }
+    if(turningRight){
+      cube.rotation.y -= 0.05
+    }
+    if(movingForward){
+      if (Math.abs(cube.position.x) <= 22) {
+        cube.position.x -= Math.sin(cube.rotation.y)/6
+      } else if (cube.position.x >= 22) {
+        cube.position.x = 21.99999999;
+      } else if (cube.position.x <= 22) {
+        cube.position.x = -21.99999999;
+      }
+
+      if (Math.abs(cube.position.z) <= 22) {
+        cube.position.z -= Math.cos(cube.rotation.y)/6
+      } else if (cube.position.z >= 22) {
+        cube.position.z = 21.99999999;
+      } else if (cube.position.z <= 22) {
+        cube.position.z = -21.99999999;
+      }
+    }
+    if(movingBackward){
+      if (Math.abs(cube.position.x) < 22) {
+        cube.position.x += Math.sin(cube.rotation.y)/6
+      } else if (cube.position.x >= 22) {
+        cube.position.x = 21.99999999;
+      } else if (cube.position.x <= -22) {
+        cube.position.x = -21.99999999;
+      }
+
+      if (Math.abs(cube.position.z) < 22) {
+        cube.position.z += Math.cos(cube.rotation.y)/6
+      } else if (cube.position.z >= 22) {
+        cube.position.z = 21.99999999;
+      } else if (cube.position.z <= -22) {
+        cube.position.z = -21.99999999;
+      }
+    }
+
+
   }
   renderer.render( scene, camera );
 }
@@ -157,41 +205,45 @@ window.onkeydown = (e) => {
   let key = e.keyCode ? e.keyCode : e.which;
 
   if (key === 37) {
-    cube.rotation.y += 0.1
+    window.turningLeft = true;
+    // cube.rotation.y += 0.1
   } else if (key === 38) {
-    if (Math.abs(cube.position.x) <= 22) {
-      cube.position.x -= Math.sin(cube.rotation.y)/2
-    } else if (cube.position.x >= 22) {
-      cube.position.x = 21.99999999;
-    } else if (cube.position.x <= 22) {
-      cube.position.x = -21.99999999;
-    }
+    window.movingForward = true;
+    // if (Math.abs(cube.position.x) <= 22) {
+    //   cube.position.x -= Math.sin(cube.rotation.y)/2
+    // } else if (cube.position.x >= 22) {
+    //   cube.position.x = 21.99999999;
+    // } else if (cube.position.x <= 22) {
+    //   cube.position.x = -21.99999999;
+    // }
 
-    if (Math.abs(cube.position.z) <= 22) {
-      cube.position.z -= Math.cos(cube.rotation.y)/2
-    } else if (cube.position.z >= 22) {
-      cube.position.z = 21.99999999;
-    } else if (cube.position.z <= 22) {
-      cube.position.z = -21.99999999;
-    }
+    // if (Math.abs(cube.position.z) <= 22) {
+    //   cube.position.z -= Math.cos(cube.rotation.y)/2
+    // } else if (cube.position.z >= 22) {
+    //   cube.position.z = 21.99999999;
+    // } else if (cube.position.z <= 22) {
+    //   cube.position.z = -21.99999999;
+    // }
   } else if (key === 39){
-    cube.rotation.y -= 0.1
+    window.turningRight = true;
+    // cube.rotation.y -= 0.1
   } else if (key === 40){
-    if (Math.abs(cube.position.x) < 22) {
-      cube.position.x += Math.sin(cube.rotation.y)/2
-    } else if (cube.position.x >= 22) {
-      cube.position.x = 21.99999999;
-    } else if (cube.position.x <= -22) {
-      cube.position.x = -21.99999999;
-    }
-
-    if (Math.abs(cube.position.z) < 22) {
-      cube.position.z += Math.cos(cube.rotation.y)/2
-    } else if (cube.position.z >= 22) {
-      cube.position.z = 21.99999999;
-    } else if (cube.position.z <= -22) {
-      cube.position.z = -21.99999999;
-    }
+    window.movingBackward = true;
+    // if (Math.abs(cube.position.x) < 22) {
+    //   cube.position.x += Math.sin(cube.rotation.y)/2
+    // } else if (cube.position.x >= 22) {
+    //   cube.position.x = 21.99999999;
+    // } else if (cube.position.x <= -22) {
+    //   cube.position.x = -21.99999999;
+    // }
+    //
+    // if (Math.abs(cube.position.z) < 22) {
+    //   cube.position.z += Math.cos(cube.rotation.y)/2
+    // } else if (cube.position.z >= 22) {
+    //   cube.position.z = 21.99999999;
+    // } else if (cube.position.z <= -22) {
+    //   cube.position.z = -21.99999999;
+    // }
   }
 
   if (key === 32){
@@ -203,6 +255,19 @@ window.onkeydown = (e) => {
     spheres.push(sphere)
 
     bulletYAngles.push(cube.rotation.y)
+  }
+}
+
+window.onkeyup = (e) => {
+  let key = e.keyCode ? e.keyCode : e.which;
+  if (key === 37) {
+    window.turningLeft = false
+  } else if (key === 38) {
+    window.movingForward = false
+  } else if (key === 39){
+    window.turningRight = false
+  } else if (key === 40){
+    window.movingBackward = false
   }
 }
 
@@ -284,20 +349,20 @@ function removeIntro(e){
 }
 
 function gameOver(){
-  liveGame = false
-  let outro = document.getElementById('outro-screen')
-  let status = cube.health > 0 ? "<h1>Congratulations, you WIN!!!</h1>" : "<h1>You Lose</h1>"
-  outro.innerHTML += status
-  outro.innerHTML += "<h2>Refresh the page to play again!</h2>"
+  liveGame = false;
+  let outro = document.getElementById('outro-screen');
+  let status = cube.health > 0 ? "<h1>Congratulations, you WIN!!!</h1>" : "<h1>You Lose</h1>";
+  outro.innerHTML += status;
+  outro.innerHTML += "<h2>Refresh the page to play again!</h2>";
 
-  outro.style.display = "block"
+  outro.style.display = "block";
 }
 
-let modal = document.getElementById('intro-screen')
-let gameArea = document.getElementById('grey-out')
-let thingy = document.getElementById('start-game').onclick = removeIntro
+let modal = document.getElementById('intro-screen');
+let gameArea = document.getElementById('grey-out');
+let thingy = document.getElementById('start-game').onclick = removeIntro;
 
 
-setupGame()
-setupMap()
+setupGame();
+setupMap();
 render();
