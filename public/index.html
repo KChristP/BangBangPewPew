@@ -12,8 +12,20 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	</head>
 	<body>
-		<!-- <div id="game-display"></div> -->
-		<div class="hud"><label>Health:</label> <div id="health">100</div></div>
+		<div id="intro-screen">
+			<h1>Welcome to GhostBlaster</h1>
+			<p>Kill all the ghosts before they kill you!</p>
+			<h3>The controls are:</h3>
+			<ul>
+				<li>up_arrow = forward</li>
+				<li>down_arrow = backward</li>
+				<li>right_arrow = turn right</li>
+				<li>left_arrow = turn left</li>
+				<li>space_bar = fire/shoot</li>
+				<button id="start-game">Start Game!</button>
+			</ul>
+		</div>
+		<div class="hud"><div class="sub-box"><label>Score:</label> <div id="score">0</div></div><div class="sub-box"><label>Health:</label> <div id="health">100</div></div></div>
 		<script src="js/three.js"></script>
 		<script src="js/main.js">
 

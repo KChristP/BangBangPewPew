@@ -1,20 +1,50 @@
 
-var loader = new THREE.TextureLoader();
-//Initial setup
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-let villains = []
 
-// Meshes
-let cubeGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 )
-let sphereGeometry = new THREE.IcosahedronGeometry(0.25, 4);
-let heroMaterial = new THREE.MeshLambertMaterial( { color: 0x336699 } );
-let bulletMaterial = new THREE.MeshNormalMaterial( { wireframe: true } );
-let cube = new THREE.Mesh( cubeGeometry, heroMaterial );
-cube.health = 100
+function setupGame(){
+  window.loader = new THREE.TextureLoader();
+  //Initial setup
+  window.scene = new THREE.Scene();
+  window.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  window.renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  window.liveGame = false
+
+  // Meshes
+  let cubeGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 )
+  window.sphereGeometry = new THREE.IcosahedronGeometry(0.25, 4);
+  let heroMaterial = new THREE.MeshLambertMaterial( { color: 0x336699 } );
+  window.bulletMaterial = new THREE.MeshNormalMaterial( { wireframe: true } );
+  window.cube = new THREE.Mesh( cubeGeometry, heroMaterial );
+  cube.health = 100
+  cube.score = 0
+  cube.position.x = -20
+  cube.position.z = 20
+  cube.add(camera);
+  camera.position.z = 1;
+  camera.position.y = 1;
+  camera.position.x = 0;
+  scene.add( cube );
+
+  // scene.add(villain)
+
+  window.villains = []
+  window.spheres = []
+  window.evilSpheres = []
+  window.evilTrajectories = []
+  window.bulletYAngles = []
+
+  let pointLight1 = new THREE.PointLight(0xFFFFFF);
+  let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
+
+  pointLight1.position.set(10, 50, -130)
+  scene.add(pointLight1);
+  scene.add(ambientLight);
+  scene.fog = new THREE.FogExp2(0xD6F1FF, 0.01);
+}
+
+
 
 
 function setupVillains(number){
@@ -26,6 +56,7 @@ function setupVillains(number){
     let villain = new THREE.Mesh( villainGeometry, villainMaterial );
     villain.position.x = Math.random() * 22
     villain.position.z = Math.random() * 22
+    villain.rotation.y = Math.random() * 2 * Math.PI
     villain.hits = 0
     villain.shooting = false
     villain.countTimer = 0
@@ -34,99 +65,79 @@ function setupVillains(number){
   }
 }
 
-// scene.add(villain)
-
-let spheres = []
-let evilSpheres = []
-let evilTrajectories = []
-let bulletYAngles = []
-cube.position.x = -20
-cube.position.z = 20
-
-
-scene.add( cube );
-
-// create light sources
-let pointLight1 = new THREE.PointLight(0xFFFFFF);
-let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
-
-pointLight1.position.set(10, 50, -130)
-scene.add(pointLight1);
-scene.add(ambientLight);
-scene.fog = new THREE.FogExp2(0xD6F1FF, 0.01);
-
-
-// Camera and Render
-camera.position.z = 1;
-camera.position.y = 1
-camera.position.x = 0
-cube.add(camera)
-
 function render() {
   requestAnimationFrame( render );
-
-  spheres.forEach((sphere, index) => {
-    sphere.position.x -= Math.sin(bulletYAngles[index])
-    sphere.position.z -= Math.cos(bulletYAngles[index])
-    villains.forEach((villain) => {
-      if(detectCollision(villain, sphere)){
-        villain.hits += 1
-        if(villain.hits > 10){
-          scene.remove(villain)
-          villains.splice(villains.indexOf(villain), 1)
-          villain = null
-        } else {
-          villain.material.color.setRGB(
-            1/(villain.hits/4) * villain.material.color.r,
-            1/(villain.hits/5) * villain.material.color.g,
-            1/(villain.hits/5) * villain.material.color.b
-          )
+  if(liveGame){
+    spheres.forEach((sphere, index) => {
+      sphere.position.x -= Math.sin(bulletYAngles[index])
+      sphere.position.z -= Math.cos(bulletYAngles[index])
+      villains.forEach((villain) => {
+        if(detectCollision(villain, sphere)){
+          villain.hits += 1
+          if(villain.hits > 10){
+            scene.remove(villain)
+            villains.splice(villains.indexOf(villain), 1)
+            villain = null
+            cube.score += 1
+            manageScore()
+          } else {
+            villain.material.color.setRGB(
+              1/(villain.hits/4) * villain.material.color.r,
+              1/(villain.hits/5) * villain.material.color.g,
+              1/(villain.hits/5) * villain.material.color.b
+            )
+          }
         }
+      })
+      if(Math.abs(sphere.position.x > 25) || Math.abs(sphere.position.z > 25)) {
+        scene.remove(sphere);
+        spheres.splice(index, 1)
+        bulletYAngles.splice(index, 1)
+        sphere = null
       }
     })
-    if(Math.abs(sphere.position.x > 25) || Math.abs(sphere.position.z > 25)) {
-      scene.remove(sphere);
-      spheres.splice(index, 1)
-      bulletYAngles.splice(index, 1)
-      sphere = null
-    }
-  })
-  evilSpheres.forEach((sphere, index) => {
-    sphere.position.x -= Math.sin(evilTrajectories[index])
-    sphere.position.z -= Math.cos(evilTrajectories[index])
-    if(detectCollision(cube, sphere)){
-      cube.health -= 1
-      manageHit()
-    }
-  })
-
-  function manageHit(){
-    document.getElementById("health").innerHTML = cube.health
-  }
-
-  villains.forEach((villain) => {
-    if(Math.abs(villain.position.x) > 21 || Math.abs(villain.position.z) > 21){
-      resetPosition(villain)
-      villain.rotation.y += Math.random() * Math.PI
-    }
-    if(distance(villain.position.x, villain.position.z, cube.position.x, cube.position.z) < 10){
-      // villain.shooting = true
-      villain.countTimer +=1
-      if(villain.countTimer % 140 === 0){
-        let villainSphere = new THREE.Mesh(sphereGeometry, bulletMaterial);
-        villainSphere.position.set(villain.position.x, villain.position.y, villain.position.z)
-        let trajectory = Math.atan2(-(cube.position.x - villain.position.x), -(cube.position.z - villain.position.z)) + ((Math.random() - 0.5) * 0.2)
-        villain.rotation.y = trajectory - Math.PI/2
-        scene.add(villainSphere)
-        evilSpheres.push(villainSphere)
-        evilTrajectories.push(trajectory)
+    evilSpheres.forEach((sphere, index) => {
+      sphere.position.x -= Math.sin(evilTrajectories[index])
+      sphere.position.z -= Math.cos(evilTrajectories[index])
+      if(detectCollision(cube, sphere)){
+        cube.health -= 1
+        manageHit()
       }
-    } else {
-      villain.translateX(-0.05)
-    }
-  })
+    })
+
+    villains.forEach((villain) => {
+      if(Math.abs(villain.position.x) > 21 || Math.abs(villain.position.z) > 21){
+        resetPosition(villain)
+        villain.rotation.y += Math.random() * Math.PI
+      }
+      if(distance(villain.position.x, villain.position.z, cube.position.x, cube.position.z) < 15){
+        // villain.shooting = true
+        villain.countTimer +=1
+        if(villain.countTimer % 140 === 0){
+          let villainSphere = new THREE.Mesh(sphereGeometry, bulletMaterial);
+          villainSphere.position.set(villain.position.x, villain.position.y, villain.position.z)
+          let trajectory = Math.atan2(-(cube.position.x - villain.position.x), -(cube.position.z - villain.position.z)) + ((Math.random() - 0.5) * 0.2)
+          villain.rotation.y = trajectory - Math.PI/2
+          scene.add(villainSphere)
+          evilSpheres.push(villainSphere)
+          evilTrajectories.push(trajectory)
+        }
+      } else {
+        villain.translateX(-0.05)
+      }
+    })
+  }
   renderer.render( scene, camera );
 }
+
+function manageHit(){
+  document.getElementById("health").innerHTML = cube.health
+}
+
+function manageScore(){
+  document.getElementById("score").innerHTML = cube.score
+}
+
 
 function resetPosition(object){
   if(object.position.x > 21) {object.position.x -= 0.05}
@@ -158,7 +169,6 @@ window.onkeydown = (e) => {
     } else if (cube.position.z <= 22) {
       cube.position.z = -21.99999999;
     }
-
   } else if (key === 39){
     cube.rotation.y -= 0.1
   } else if (key === 40){
@@ -177,8 +187,8 @@ window.onkeydown = (e) => {
     } else if (cube.position.z <= -22) {
       cube.position.z = -21.99999999;
     }
-    // cube.translateZ(0.3)
   }
+
   if (key === 32){
     let sphere = new THREE.Mesh(sphereGeometry, bulletMaterial);
     sphere.position.set(cube.position.x, cube.position.y, cube.position.z)
@@ -247,10 +257,9 @@ function setupMap (){
   ceiling.position.y = 4
   scene.add(ceiling)
 
-  setupVillains(5)
+  setupVillains(10)
 }
 
-setupMap()
 
 function distance(x1, y1, x2, y2) {
 	return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
@@ -261,4 +270,17 @@ function detectCollision(object1, object2){
   (Math.abs(object1.position.z - object2.position.z) < 1)
 }
 
-  render();
+function removeIntro(e){
+  e.preventDefault();
+  modal.style.height = "0";
+  modal.style.display = "none";
+  liveGame = true
+}
+
+let modal = document.getElementById('intro-screen')
+let thingy = document.getElementById('start-game').onclick = removeIntro
+
+
+setupGame()
+setupMap()
+render();

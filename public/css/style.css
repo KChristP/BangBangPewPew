@@ -1,11 +1,10 @@
 .hud {
   position: absolute;
-  bottom: 5%;
-  left: 80%;
-  width: 100px;
-  display: flex;
-  justify-content: space-around;
-  font-family: sans-serif
+    bottom: 5%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    font-family: sans-serif;
 }
 
 .health {
@@ -15,3 +14,7 @@
 .score {
 
 }
+
+.sub-box {padding: 45px 5px;background-color: black;opacity: 0.6;color: red;font-weight: bold;display: flex;justify-content: space-between;border-radius: 100px;border: 2px solid black;font-size: 20px;width: 110px;}
+
+#intro-screen {position: absolute;top: 30%;left: 40%;background-color: aquamarine;padding: 20px;border-radius: 3px;}
