@@ -15,6 +15,34 @@
 
 }
 
-.sub-box {padding: 45px 5px;background-color: black;opacity: 0.6;color: red;font-weight: bold;display: flex;justify-content: space-between;border-radius: 100px;border: 2px solid black;font-size: 20px;width: 110px;}
+.sub-box {padding: 25px;background-color: black;opacity: 0.6;color: red;font-weight: bold;display: flex;justify-content: space-between;border-radius: 100px;border: 2px solid black;font-size: 20px;flex-direction: column;align-items: center;}
 
-#intro-screen {position: absolute;top: 30%;left: 40%;background-color: aquamarine;padding: 20px;border-radius: 3px;}
+#intro-screen, #outro-screen {position: absolute;top: 20%;left: 33%;background-color: #faebd7;padding: 20px;border-radius: 3px;z-index: 1;font-family: sans-serif;color: darkred;border: 2px solid darkslategrey;}
+
+#grey-out {
+  opacity: 0.5;
+}
+#score, #health {font-size: 40px;}
+
+#outro-screen {
+  display: none;
+}
+
+ul {list-style: none;padding: 0;}
+
+li {padding: 5px;}
+
+button {
+  background-color: darkred;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 40px;
+  margin-top: 20px;
+}
+
+button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  border: 2px solid black;
+}

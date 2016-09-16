@@ -7,10 +7,10 @@ function setupGame(){
   window.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   window.renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  document.getElementById('grey-out').appendChild(renderer.domElement);
 
   window.liveGame = false
-
+  window.numberOfVillains = 10
   // Meshes
   let cubeGeometry = new THREE.BoxGeometry( 0.5, 0.5, 1 )
   window.sphereGeometry = new THREE.IcosahedronGeometry(0.25, 4);
@@ -36,7 +36,7 @@ function setupGame(){
   window.bulletYAngles = []
 
   let pointLight1 = new THREE.PointLight(0xFFFFFF);
-  let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
+  window.ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);
 
   pointLight1.position.set(10, 50, -130)
   scene.add(pointLight1);
@@ -113,7 +113,7 @@ function render() {
       if(distance(villain.position.x, villain.position.z, cube.position.x, cube.position.z) < 15){
         // villain.shooting = true
         villain.countTimer +=1
-        if(villain.countTimer % 140 === 0){
+        if(villain.countTimer % 100 === 0){
           let villainSphere = new THREE.Mesh(sphereGeometry, bulletMaterial);
           villainSphere.position.set(villain.position.x, villain.position.y, villain.position.z)
           let trajectory = Math.atan2(-(cube.position.x - villain.position.x), -(cube.position.z - villain.position.z)) + ((Math.random() - 0.5) * 0.2)
@@ -132,10 +132,15 @@ function render() {
 
 function manageHit(){
   document.getElementById("health").innerHTML = cube.health
+  ambientLight.color.setHex(0xFF0000)
+  setTimeout(()=> ambientLight.color.setHex(0xFFFFFF), 1)
+  let redLight = new THREE.AmbientLight()
+  if(cube.health <= 0){ gameOver() }
 }
 
 function manageScore(){
   document.getElementById("score").innerHTML = cube.score
+  if(cube.score >= numberOfVillains){gameOver()}
 }
 
 
@@ -257,7 +262,7 @@ function setupMap (){
   ceiling.position.y = 4
   scene.add(ceiling)
 
-  setupVillains(10)
+  setupVillains(numberOfVillains)
 }
 
 
@@ -274,10 +279,22 @@ function removeIntro(e){
   e.preventDefault();
   modal.style.height = "0";
   modal.style.display = "none";
+  gameArea.style.opacity = "1"
   liveGame = true
 }
 
+function gameOver(){
+  liveGame = false
+  let outro = document.getElementById('outro-screen')
+  let status = cube.health > 0 ? "<h1>Congratulations, you WIN!!!</h1>" : "<h1>You Lose</h1>"
+  outro.innerHTML += status
+  outro.innerHTML += "<h2>Refresh the page to play again!</h2>"
+
+  outro.style.display = "block"
+}
+
 let modal = document.getElementById('intro-screen')
+let gameArea = document.getElementById('grey-out')
 let thingy = document.getElementById('start-game').onclick = removeIntro
 
 
