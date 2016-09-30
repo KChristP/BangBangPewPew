@@ -1,3 +1,11 @@
+h1 {
+  font-size: 70px;
+  text-shadow: -1px 1px #faebd7
+}
+h1, h2, h3 {
+  font-family: 'Ruslan Display', cursive;
+}
+
 .hud {
   position: absolute;
     bottom: 5%;
@@ -17,7 +25,24 @@
 
 .sub-box {padding: 25px;background-color: black;opacity: 0.6;color: red;font-weight: bold;display: flex;justify-content: space-between;border-radius: 100px;border: 2px solid black;font-size: 20px;flex-direction: column;align-items: center;}
 
-#intro-screen, #outro-screen {position: absolute;top: 20%;left: 33%;background-color: #faebd7;padding: 20px;border-radius: 3px;z-index: 1;font-family: sans-serif;color: darkred;border: 2px solid darkslategrey;}
+#intro-screen, #outro-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, 50%); /* IE 9 */
+  -webkit-transform: translate(-50%, -50%); /* Safari */
+  transform: translate(-50%, -50%);
+  /*background-color: #faebd7;*/
+  padding: 20px;
+  text-align: center
+  border-radius: 3px;
+  z-index: 1;
+  font-family: sans-serif;
+  color: #b3b392;
+  border: 2px solid darkslategrey;
+  background-image: url("../images/blackwebs.jpg");
+  background-position: center;
+}
 
 #grey-out {
   opacity: 0.5;
