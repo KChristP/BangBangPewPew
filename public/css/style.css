@@ -1,9 +1,28 @@
 h1 {
-  font-size: 70px;
-  text-shadow: -1px 1px #faebd7
+  font-size: 65px;
+  /*text-shadow: -1px 1px #faebd7;*/
+  /*color: white;  /* Fallback: assume this color ON TOP of image */
+
 }
-h1, h2, h3 {
+h1, h2, h3, i {
   font-family: 'Ruslan Display', cursive;
+  background: url(../images/metal_lines_stripes_light_shiny_silver_18401_3840x2160.jpg) no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0px;
+}
+h2 {
+  font-size: 25px;
+}
+.b {
+  font-size: 80px;
+  letter-spacing: 1px;
+  padding-right: 7px;
+}
+ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hud {
@@ -38,10 +57,14 @@ h1, h2, h3 {
   border-radius: 3px;
   z-index: 1;
   font-family: sans-serif;
-  color: #b3b392;
+  font-weight: bold;
+  color: #faebd7;
   border: 2px solid darkslategrey;
   background-image: url("../images/blackwebs.jpg");
-  background-position: center;
+  background-position: top;
+  display: flex;
+  flex-direction: column;
+  align-items: center
 }
 
 #grey-out {
@@ -55,7 +78,7 @@ h1, h2, h3 {
 
 ul {list-style: none;padding: 0;}
 
-li {padding: 5px;}
+li {padding: 10px;}
 
 button {
   background-color: darkred;
@@ -64,10 +87,12 @@ button {
   font-weight: bold;
   padding: 5px 40px;
   margin-top: 20px;
+  border: 1px solid black;
+
 }
 
 button:hover {
   cursor: pointer;
   text-decoration: underline;
-  border: 2px solid black;
+  border: 1px solid #ccc;
 }
